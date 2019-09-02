@@ -1,26 +1,55 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { Fragment, Component } from 'react';
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+//packages
+import { Route, Redirect, Switch } from 'react-router-dom';
+
+//component
+import NavBar from './component/NavBar';
+import Auth from './component/Auth';
+import Register from './component/Register';
+import ComplaintForm from './component/ComplaintForm';
+import Complains from './component/Complains';
+import Logout from './component/LogOut';
+
+//çommon
+import NotFound from './common/NotFound';
+import ProtectedRoute from './common/ProtectedRoute';
+
+//services
+import auth from './services/authServices.js';
+
+class App extends Component {
+  state = {};
+
+  componentDidMount() {
+    this.setState({ user: auth.getCurrentUser() });
+  }
+
+  render() {
+    const { user } = this.state;
+    return (
+      <Fragment>
+        <NavBar user={user} />
+        <div className='container '>
+          <Switch>
+            <Route
+              path='/complains'
+              render={props => <Complains {...props} user={user} />}
+            />
+            <ProtectedRoute path='/complain/:id' component={ComplaintForm} />
+            <Route path='/login' component={Auth} />
+            <Route path='/logout' component={Logout} />
+            <ProtectedRoute path='/register' component={Register} />
+            <Redirect exact from='/' to='/complains' />
+            <Route path='/not-found' component={NotFound} />
+
+            <Redirect to='/not-found' />
+          </Switch>
+        </div>
+      </Fragment>
+    );
+  }
 }
 
 export default App;
