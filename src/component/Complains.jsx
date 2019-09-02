@@ -148,7 +148,7 @@ export default class Complains extends Component {
           />
         </div>
         <div className='col-sm-8 col-12'>
-          {user && (
+          {user && !user.isAdmin && (
             <Link className='btn-primary btn mb-2' to='/complain/new'>
               New Complaint
             </Link>
